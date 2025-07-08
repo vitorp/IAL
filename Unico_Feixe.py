@@ -2,6 +2,7 @@ import pygame
 import math
 import sys
 import render_lib
+from render_lib import PRETO, BRANCO, AMARELO, VERMELHO, AZUL
 from algebra_linear import calcular_pontos_parabola, intersecao_raio_parabola,matriz_rotacao,foco,h, calcular_normal, matriz_reflexao, mudar_largura_altura, calcular_feixe
 
 # Inicialização
@@ -14,13 +15,6 @@ relogio = pygame.time.Clock()
 fonte = pygame.font.SysFont("arial", 18)
 # Inicializa referencias globais
 render_lib.render_init(fonte, tela, pygame)
-
-# Cores
-PRETO = (0, 0, 0)
-BRANCO = (255, 255, 255)
-AMARELO = (255, 255, 0)
-AZUL = (100, 255, 255)
-VERMELHO = (255, 100, 100)
 
 # origem
 origem = (h, altura - 50)
@@ -44,6 +38,7 @@ def desenhar_legendas():
 # Loop principal
 angulo = 0
 rodando = True
+
 while rodando:
     tela.fill(PRETO)
     for evento in pygame.event.get():
@@ -71,14 +66,13 @@ while rodando:
         render_lib.desenhar_matriz(M_refl.m, (0, tamanho_matriz_desenhada[1] + 10), AMARELO, f"Matriz Reflexão Raio ({direcao[0]:.3f}, {direcao[1]:.3f}) -> ({v_refletido[0]:.3f}, {v_refletido[1]:.3f})")
         
         # Desenha raio refletido
-        fim_refletido = (ponto_intersecao[0] + v_refletido[0]*1000, 
-                        ponto_intersecao[1] + v_refletido[1]*1000)
-        pygame.draw.line(tela, AZUL, ponto_intersecao, fim_refletido, 2)
+        render_lib.desenhar_raio_refletido(ponto_intersecao, v_refletido)
         
         # Desenha normal (para visualização)
-        normal_end = (ponto_intersecao[0] + normal[0]*50, 
-                     ponto_intersecao[1] + normal[1]*50)
-        pygame.draw.line(tela, VERMELHO, ponto_intersecao, normal_end, 1)
+        render_lib.desenhar_reta_normal(ponto_intersecao, normal)
+    else:
+        # Desenha raio ao infinito
+        render_lib.desenhar_raio_infinito(origem, direcao)
 
     pygame.display.flip()
     relogio.tick(60)

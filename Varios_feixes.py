@@ -1,7 +1,7 @@
 import pygame
-import math
 import sys
 import render_lib
+from render_lib import PRETO, BRANCO, AMARELO, VERMELHO, AZUL
 from algebra_linear import calcular_pontos_parabola, intersecao_raio_parabola,matriz_rotacao,foco, calcular_normal, matriz_reflexao, mudar_largura_altura, h,k, calcular_feixe
 
 pygame.init()
@@ -14,14 +14,6 @@ fonte = pygame.font.SysFont("arial", 18)
 # Inicializa referencias globais
 render_lib.render_init(fonte, tela, pygame)
 
-# Cores
-PRETO = (0, 0, 0)
-BRANCO = (255, 255, 255)
-AMARELO = (255, 255, 0)
-AZUL = (0, 200, 255)
-LARANJA = (255, 150, 0)
-VERMELHO = (255, 80, 80)
-CINZA = (200, 200, 200)
 origem = (h, altura - 50)
 
 def desenhar_parabola():
@@ -31,7 +23,7 @@ def desenhar_parabola():
     pygame.draw.circle(tela, AMARELO, (int(foco[0]), int(foco[1])), 6)
     pygame.draw.circle(tela, VERMELHO, (int(origem[0]), int(origem[1])), 6)
 
-def desenhar_feixes(cor_raio, cor_reflexao, angulo_global):
+def desenhar_feixes(cor_raio, angulo_global):
     tamanho_matriz_desenhada = (0,100)
     numero_raio = 0
     for ang in range(-50, 51, 10):
@@ -43,13 +35,14 @@ def desenhar_feixes(cor_raio, cor_reflexao, angulo_global):
             pygame.draw.line(tela, cor_raio, origem, ponto_intersecao, 2)
 
             # Desenha raio refletido
-            fim_refletido = (ponto_intersecao[0] + v_refletido[0] * 1000,
-                             ponto_intersecao[1] + v_refletido[1] * 1000)
-            pygame.draw.line(tela, cor_reflexao, ponto_intersecao, fim_refletido, 1)
+            render_lib.desenhar_raio_refletido(ponto_intersecao, v_refletido)
 
             # Desenha matriz de rotação e reflexão
             tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m, (0,tamanho_matriz_desenhada[1]), BRANCO, f"Matriz Rotação Raio {numero_raio}")
             tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_refl.m, (0,tamanho_matriz_desenhada[1]), AMARELO, f"Matriz Reflexão Raio {numero_raio}")
+        else:
+            # Desenha raio ao infinito
+            render_lib.desenhar_raio_infinito(foco, direcao)
 
 def desenhar_legendas():
     textos = [
@@ -80,7 +73,7 @@ while rodando:
 
     # Fonte no foco (ideal)
     origem = foco
-    desenhar_feixes(AMARELO, AZUL, angulo_global)
+    desenhar_feixes(AMARELO, angulo_global)
     
     pygame.display.flip()
     relogio.tick(60)

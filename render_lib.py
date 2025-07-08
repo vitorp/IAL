@@ -1,3 +1,10 @@
+# Cores
+PRETO = (0, 0, 0)
+BRANCO = (255, 255, 255)
+AMARELO = (255, 255, 0)
+AZUL = (100, 255, 255)
+VERMELHO = (255, 100, 100)
+
 def render_init(fonte_ref, tela_ref, jogo):
     global fonte, tela, pygame
     fonte = fonte_ref
@@ -53,3 +60,18 @@ def desenhar_linha1(matriz2D, origem, cor):
 
 def adicionar_coordenadas(coord1, coord2):
     return (coord1[0] + coord2[0], coord1[1] + coord2[1])
+
+### Renders de feixes
+
+def desenhar_raio_refletido(ponto_intersecao, v_refletido):
+    fim_refletido = (ponto_intersecao[0] + v_refletido[0]*1000, 
+                        ponto_intersecao[1] + v_refletido[1]*1000)
+    pygame.draw.line(tela, AZUL, ponto_intersecao, fim_refletido, 2)
+
+def desenhar_reta_normal(ponto_intersecao, normal):
+    normal_end = (ponto_intersecao[0] + normal[0]*50, 
+                     ponto_intersecao[1] + normal[1]*50)
+    pygame.draw.line(tela, VERMELHO, ponto_intersecao, normal_end, 1)
+
+def desenhar_raio_infinito(origem, direcao):
+    pygame.draw.line(tela, AMARELO, origem, (origem[0] + direcao[0]*1000, origem[1] + direcao[1]*1000), 3)
