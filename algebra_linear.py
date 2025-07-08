@@ -6,7 +6,6 @@ largura, altura = 800, 600
 a = 1 / 300
 h, k = 550, 250
 foco = (h, k + 1 / (4 * a))
-origem = (h, altura - 50)
 
 def mudar_largura_altura(nova_largura, nova_altura):
     global largura, altura
@@ -46,6 +45,27 @@ def calcular_pontos_parabola():
         pontos.append((x, y))
     return pontos
 
+def calcular_feixe(angulo, origem):
+    ### TRANSFORMAÇÕES
+    # 1. Matriz de rotação para o raio incidente
+    M_rot = matriz_rotacao(angulo)
+    direcao = M_rot.aplicar((1,0))  # Rotaciona vetor (1,0) pelo ângulo
+    
+    # 2. Encontrar ponto de interseção
+    ponto_intersecao = intersecao_raio_parabola(origem, direcao)
+
+    if ponto_intersecao:
+        # 3. Calcular normal e matriz de reflexão
+        normal = calcular_normal(ponto_intersecao[0])
+        M_refl = matriz_reflexao(normal)
+        
+        # 4. Aplicar reflexão ao vetor direção
+        v_refletido = M_refl.aplicar(direcao)
+
+        return (M_rot, direcao, ponto_intersecao, normal, M_refl, v_refletido)
+    else:
+        return(M_rot, direcao, ponto_intersecao, None, None, None)
+
 def calcular_normal(x_parabola):
     """Vetor normal unitário à parábola no ponto x"""
     derivada = 2 * a * (x_parabola - h)
@@ -57,23 +77,17 @@ def intersecao_raio_parabola(origem, direcao):
     x0, y0 = origem
     dx, dy = direcao
 
-    if abs(dx) < 1e-6:
-        return None
-
     A = a * dx**2
     B = 2 * a * dx * (x0 - h) - dy
     C = a * (x0 - h)**2 + k - y0
     D = B**2 - 4 * A * C
-
-    if abs(A) < 1e-8 or D < 0:
-        return None
 
     t1 = (-B + math.sqrt(D)) / (2 * A)
     t2 = (-B - math.sqrt(D)) / (2 * A)
     t_valido = [t for t in (t1, t2) if t > 0]
     t = min(t_valido) if t_valido else None
     if t is None:
-        return None
+        return (h, k)
 
     x = x0 + t * dx
     y = y0 + t * dy

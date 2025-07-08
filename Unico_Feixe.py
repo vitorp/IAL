@@ -2,7 +2,7 @@ import pygame
 import math
 import sys
 import render_lib
-from algebra_linear import calcular_pontos_parabola, origem,intersecao_raio_parabola,matriz_rotacao,foco, calcular_normal, matriz_reflexao, mudar_largura_altura
+from algebra_linear import calcular_pontos_parabola, intersecao_raio_parabola,matriz_rotacao,foco,h, calcular_normal, matriz_reflexao, mudar_largura_altura, calcular_feixe
 
 # Inicialização
 pygame.init()
@@ -22,11 +22,24 @@ AMARELO = (255, 255, 0)
 AZUL = (100, 255, 255)
 VERMELHO = (255, 100, 100)
 
+# origem
+origem = (h, altura - 50)
 
 def desenhar_parabola():
     pontos = calcular_pontos_parabola()
     pygame.draw.lines(tela, BRANCO, False, pontos, 2)
     pygame.draw.circle(tela, VERMELHO, (int(foco[0]), int(foco[1])), 8)
+
+def desenhar_legendas():
+    textos = [
+        ("Fonte Amarela, Foco Vermelho", VERMELHO),
+       
+        ("RAIO incidente", AMARELO),
+        ("RAIO refletido", AZUL),
+    ]
+    for i, (txt, cor) in enumerate(textos):
+        texto = fonte.render(txt, True, cor)
+        tela.blit(texto, (20, 20 + i * 25))
 
 # Loop principal
 angulo = 0
@@ -45,33 +58,24 @@ while rodando:
     # Desenhar parábola e foco
     desenhar_parabola()
     pygame.draw.circle(tela, AMARELO, origem, 10)
+    desenhar_legendas()
 
-    ### --- TRANSFORMAÇÕES --- ###
-    # 1. Matriz de rotação para o raio incidente
-    M_rot = matriz_rotacao(angulo)
-    tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m,(0,0), BRANCO, "Matriz Rotacao")
-    direcao = M_rot.aplicar((1, 0))  # Rotaciona vetor (1,0) pelo ângulo
-    
-    # 2. Encontrar ponto de interseção
-    ponto_intersecao = intersecao_raio_parabola(origem, direcao)
-    
+    (M_rot, direcao,  ponto_intersecao, normal, M_refl, v_refletido) = calcular_feixe(angulo, origem)
+    tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m,(0, 100), BRANCO, f"Matriz Rotação {angulo} graus")
+        
     if ponto_intersecao:
+        # Desenha raio
         pygame.draw.line(tela, AMARELO, origem, ponto_intersecao, 3)
         
-        # 3. Calcular normal e matriz de reflexão
-        normal = calcular_normal(ponto_intersecao[0])
-        M_refl = matriz_reflexao(normal)
-        render_lib.desenhar_matriz(M_refl.m, (0, tamanho_matriz_desenhada[1] + 10), AMARELO, "Matriz Reflexao")
+        # Desenha matriz de reflexão
+        render_lib.desenhar_matriz(M_refl.m, (0, tamanho_matriz_desenhada[1] + 10), AMARELO, f"Matriz Reflexão Raio ({direcao[0]:.3f}, {direcao[1]:.3f}) -> ({v_refletido[0]:.3f}, {v_refletido[1]:.3f})")
         
-        # 4. Aplicar reflexão ao vetor direção
-        v_refletido = M_refl.aplicar(direcao)
-        
-        # Desenhar raio refletido
-        fim_refletido = (ponto_intersecao[0] + v_refletido[0]*300, 
-                        ponto_intersecao[1] + v_refletido[1]*300)
+        # Desenha raio refletido
+        fim_refletido = (ponto_intersecao[0] + v_refletido[0]*1000, 
+                        ponto_intersecao[1] + v_refletido[1]*1000)
         pygame.draw.line(tela, AZUL, ponto_intersecao, fim_refletido, 2)
         
-        # Desenhar normal (para visualização)
+        # Desenha normal (para visualização)
         normal_end = (ponto_intersecao[0] + normal[0]*50, 
                      ponto_intersecao[1] + normal[1]*50)
         pygame.draw.line(tela, VERMELHO, ponto_intersecao, normal_end, 1)

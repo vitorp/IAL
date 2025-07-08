@@ -2,7 +2,7 @@ import pygame
 import math
 import sys
 import render_lib
-from algebra_linear import calcular_pontos_parabola, origem,intersecao_raio_parabola,matriz_rotacao,foco, calcular_normal, matriz_reflexao, mudar_largura_altura, h,k
+from algebra_linear import calcular_pontos_parabola, intersecao_raio_parabola,matriz_rotacao,foco, calcular_normal, matriz_reflexao, mudar_largura_altura, h,k, calcular_feixe
 
 pygame.init()
 largura, altura = 1000, 600
@@ -22,6 +22,7 @@ AZUL = (0, 200, 255)
 LARANJA = (255, 150, 0)
 VERMELHO = (255, 80, 80)
 CINZA = (200, 200, 200)
+origem = (h, altura - 50)
 
 def desenhar_parabola():
     pontos = calcular_pontos_parabola()
@@ -30,25 +31,25 @@ def desenhar_parabola():
     pygame.draw.circle(tela, AMARELO, (int(foco[0]), int(foco[1])), 6)
     pygame.draw.circle(tela, VERMELHO, (int(origem[0]), int(origem[1])), 6)
 
-def desenhar_feixes(origem, cor_raio, cor_reflexao, angulo_global):
+def desenhar_feixes(cor_raio, cor_reflexao, angulo_global):
     tamanho_matriz_desenhada = (0,100)
-    counter = 0
+    numero_raio = 0
     for ang in range(-50, 51, 10):
-        counter += 1
-        base = (math.cos(math.radians(ang)), math.sin(math.radians(ang)))
-        M_rot = matriz_rotacao(angulo_global)
-        # Desenha matriz de rotação
-        tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m, (0,tamanho_matriz_desenhada[1]), BRANCO, f"Matriz Rotação Raio {counter}")
-        direcao = M_rot.aplicar(base)
-        ponto = intersecao_raio_parabola(origem, direcao)
-        if ponto:
-            pygame.draw.line(tela, cor_raio, origem, ponto, 2)
-            normal = calcular_normal(ponto[0])
-            M_refl = matriz_reflexao(normal)
-            tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_refl.m, (0,tamanho_matriz_desenhada[1]), AMARELO, f"Matriz Reflexão Raio {counter}")
-            refletido = M_refl.aplicar(direcao)
-            fim = (ponto[0] + refletido[0] * 1000, ponto[1] + refletido[1] * 1000)
-            pygame.draw.line(tela, cor_reflexao, ponto, fim, 1)
+        numero_raio += 1
+        (M_rot, direcao,  ponto_intersecao, normal, M_refl, v_refletido) = calcular_feixe(ang+ angulo_global, foco)
+        
+        if ponto_intersecao:
+            # Desenha Raio
+            pygame.draw.line(tela, cor_raio, origem, ponto_intersecao, 2)
+
+            # Desenha raio refletido
+            fim_refletido = (ponto_intersecao[0] + v_refletido[0] * 1000,
+                             ponto_intersecao[1] + v_refletido[1] * 1000)
+            pygame.draw.line(tela, cor_reflexao, ponto_intersecao, fim_refletido, 1)
+
+            # Desenha matriz de rotação e reflexão
+            tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m, (0,tamanho_matriz_desenhada[1]), BRANCO, f"Matriz Rotação Raio {numero_raio}")
+            tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_refl.m, (0,tamanho_matriz_desenhada[1]), AMARELO, f"Matriz Reflexão Raio {numero_raio}")
 
 def desenhar_legendas():
     textos = [
@@ -78,7 +79,8 @@ while rodando:
     desenhar_legendas()
 
     # Fonte no foco (ideal)
-    desenhar_feixes(foco, AMARELO, AZUL, angulo_global)
+    origem = foco
+    desenhar_feixes(AMARELO, AZUL, angulo_global)
     
     pygame.display.flip()
     relogio.tick(60)
