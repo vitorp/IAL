@@ -13,7 +13,6 @@ relogio = pygame.time.Clock()
 fonte = pygame.font.SysFont("arial", 18)
 # Inicializa referencias globais
 render_lib.render_init(fonte, tela, pygame)
-
 origem = (h, altura - 50)
 
 def desenhar_feixes(angulo_global, quantidade_feixes):
@@ -57,9 +56,10 @@ angulo_global = 0
 rodando = True
 menu = True
 simulando = False
+configurando = False
 
 selecao = 0
-opcoes = [ "Unico Feixe", "Farol"]
+opcoes = [ "Unico Feixe", "Varios Feixes", "Configurar Origem"]
 quantidade_opcoes = len(opcoes)
 
 while rodando:
@@ -88,6 +88,33 @@ while rodando:
 
         pygame.display.flip()
         relogio.tick(60)
+    # Entra em configuração de origem
+    if selecao == 2:
+        configurando = True
+    while configurando:
+        tela.fill(PRETO)
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                simulando = False
+                rodando = False
+
+        teclas = pygame.key.get_pressed()
+        if teclas[pygame.K_LEFT]: origem = (origem[0] - 1, origem[1])
+        if teclas[pygame.K_RIGHT]: origem = (origem[0] + 1, origem[1])
+        if teclas[pygame.K_UP]: origem = (origem[0], origem[1] - 1)
+        if teclas[pygame.K_DOWN]: origem = (origem[0], origem[1] + 1)
+        if teclas[pygame.K_1]: origem = (h, altura - 50)
+        if teclas[pygame.K_2]: origem = foco
+        if teclas[pygame.K_ESCAPE]:
+            configurando = False
+            simulando = False
+            menu = True
+        
+        pontos = calcular_pontos_parabola()
+        render_lib.desenhar_parabola(pontos, h, k, foco, origem)
+        render_lib.desenhar_legendas(selecao)
+        pygame.display.flip()
+        relogio.tick(60)
 
     while simulando:
         tela.fill(PRETO)
@@ -110,11 +137,8 @@ while rodando:
         
         quantidade_feixes = 0
         if (selecao == 0):
-            origem = (h, altura - 50)
             quantidade_feixes = 1
         if (selecao == 1):
-            # Fonte no foco (ideal)
-            origem = foco
             quantidade_feixes = 11
 
         desenhar_feixes(angulo_global, quantidade_feixes)

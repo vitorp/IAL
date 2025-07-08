@@ -92,10 +92,17 @@ def desenhar_legendas(selecao):
         ]
     elif selecao == 1:
         textos = [
-            ("Fonte no FOCO -> Feixes refletidos saem paralelos (Farol Ideal)", AMARELO),
+            ("Fonte Amarela, Foco Vermelho", VERMELHO),
         
-            ("RAIO incidente", BRANCO),
+            ("RAIO incidente", AMARELO),
             ("RAIO refletido", AZUL),
+        ]
+    elif selecao == 2:
+        textos = [
+            ("Fonte Amarela, Foco Vermelho", AZUL),
+            ("Pressione 1 para fonte no Padrão", AMARELO),
+            ("Pressione 2 para fonte no Foco", VERMELHO),
+            ("Pressione Esc para Selecionar origem", BRANCO),
         ]
     else:
         textos = []

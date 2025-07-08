@@ -70,17 +70,36 @@ def intersecao_raio_parabola(origem, direcao):
     x0, y0 = origem
     dx, dy = direcao
 
+    epsilon = 1e-8
+
+    if abs(dx) < epsilon:
+        # Vertical ray: x = x0 fixed
+        parabola_y = a * (x0 - h)**2 + k
+        if abs(dy) < epsilon:
+            return None  # Ray direction too small
+        t = (parabola_y - y0) / dy
+        if t < 0:
+            return None
+        x = x0
+        y = parabola_y
+        if not (400 <= x <= 700):
+            return None
+        return (x, y)
+
     A = a * dx**2
     B = 2 * a * dx * (x0 - h) - dy
     C = a * (x0 - h)**2 + k - y0
     D = B**2 - 4 * A * C
+
+    if abs(A) < 1e-8 or D < 0:
+        return None
 
     t1 = (-B + math.sqrt(D)) / (2 * A)
     t2 = (-B - math.sqrt(D)) / (2 * A)
     t_valido = [t for t in (t1, t2) if t > 0]
     t = min(t_valido) if t_valido else None
     if t is None:
-        return (h, k)
+        return None
 
     x = x0 + t * dx
     y = y0 + t * dy
