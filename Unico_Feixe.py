@@ -1,9 +1,8 @@
 import pygame
-import math
 import sys
 import render_lib
 from render_lib import PRETO, BRANCO, AMARELO, VERMELHO, AZUL
-from algebra_linear import calcular_pontos_parabola, intersecao_raio_parabola,matriz_rotacao,foco,h, calcular_normal, matriz_reflexao, mudar_largura_altura, calcular_feixe
+from algebra_linear import calcular_pontos_parabola,foco,h, mudar_largura_altura, calcular_feixe
 
 # Inicialização
 pygame.init()
