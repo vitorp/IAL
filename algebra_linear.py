@@ -26,6 +26,7 @@ def matriz_rotacao(theta_graus):
 def matriz_reflexao(normal):
     """Matriz de reflexão sobre a normal unitária n"""
     nx, ny = normal
+    # v_refeletido = v - 2 (v * n) * n
     return Matriz2D(
         1 - 2*nx*nx, -2*nx*ny,
         -2*nx*ny,    1 - 2*ny*ny
@@ -62,21 +63,20 @@ def calcular_feixe(angulo, origem):
 def calcular_normal(x_parabola):
     """Vetor normal unitário à parábola no ponto x"""
     derivada = 2 * a * (x_parabola - h)
-    normal_nao_unitario = (-derivada, 1)
+    normal_nao_unitario = (-derivada, 1) # Normal é perpendicular a tangente
     comprimento = math.sqrt(normal_nao_unitario[0]**2 + normal_nao_unitario[1]**2)
-    return (normal_nao_unitario[0]/comprimento, normal_nao_unitario[1]/comprimento)
+    return (normal_nao_unitario[0]/comprimento, normal_nao_unitario[1]/comprimento) # Normaliza para tamanho 1
 
 def intersecao_raio_parabola(origem, direcao):
     x0, y0 = origem
     dx, dy = direcao
-
     epsilon = 1e-8
 
     if abs(dx) < epsilon:
-        # Vertical ray: x = x0 fixed
+        # Raio vertical x = x0 fixed
         parabola_y = a * (x0 - h)**2 + k
         if abs(dy) < epsilon:
-            return None  # Ray direction too small
+            return None  # Raio direcional pequeno demais
         t = (parabola_y - y0) / dy
         if t < 0:
             return None
@@ -86,12 +86,18 @@ def intersecao_raio_parabola(origem, direcao):
             return None
         return (x, y)
 
+    # Parabola: y=a(x−h)^2+k
+    # Raio: x(t)=x0 +dx*t, y(t)=y0 ​+dy*t
+    # Substituir X(t) na Parabola: y0​ + dy*t=a(x0 +dx*t−h)^2 + k
+    # Mover para um lado: 0= a * dx^2 * t^2 +[2a*dx * (x0−h)−dy]* t + [ a (x0-h)^2 +k - y0]
+    # Usar formula quadratica At^2+Bt+C=0
+
     A = a * dx**2
     B = 2 * a * dx * (x0 - h) - dy
     C = a * (x0 - h)**2 + k - y0
     D = B**2 - 4 * A * C
 
-    if abs(A) < 1e-8 or D < 0:
+    if abs(A) < epsilon or D < 0:
         return None
 
     t1 = (-B + math.sqrt(D)) / (2 * A)
