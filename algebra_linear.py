@@ -1,16 +1,9 @@
 import math
 
-largura, altura = 800, 600
-
 # Parâmetros da parábola (y = a(x-h)² + k)
 a = 1 / 300
 h, k = 550, 250
 foco = (h, k + 1 / (4 * a))
-
-def mudar_largura_altura(nova_largura, nova_altura):
-    global largura, altura
-    largura = nova_largura
-    altura = nova_altura
 
 # ÁLGEBRA LINEAR
 class Matriz2D:

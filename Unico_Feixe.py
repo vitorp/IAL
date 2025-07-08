@@ -2,12 +2,11 @@ import pygame
 import sys
 import render_lib
 from render_lib import PRETO, BRANCO, AMARELO, VERMELHO, AZUL
-from algebra_linear import calcular_pontos_parabola,foco,h, mudar_largura_altura, calcular_feixe
+from algebra_linear import calcular_pontos_parabola, foco, h, calcular_feixe
 
 # Inicialização
 pygame.init()
 largura, altura = 800, 600
-mudar_largura_altura(largura,altura)
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("Reflexão em Parábola com Álgebra Linear")
 relogio = pygame.time.Clock()

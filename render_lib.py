@@ -75,3 +75,33 @@ def desenhar_reta_normal(ponto_intersecao, normal):
 
 def desenhar_raio_infinito(origem, direcao):
     pygame.draw.line(tela, AMARELO, origem, (origem[0] + direcao[0]*1000, origem[1] + direcao[1]*1000), 3)
+
+def desenhar_parabola(pontos, h, k, foco, origem):
+    pygame.draw.lines(tela, BRANCO, False, pontos, 2)
+    pygame.draw.circle(tela, BRANCO, (int(h), int(k)), 5, 1)
+    pygame.draw.circle(tela, AMARELO, (int(origem[0]), int(origem[1])), 6)
+    pygame.draw.circle(tela, VERMELHO, (int(foco[0]), int(foco[1])), 6)
+
+def desenhar_legendas(selecao):
+    if selecao == 0:
+        textos = [
+            ("Fonte Amarela, Foco Vermelho", VERMELHO),
+        
+            ("RAIO incidente", AMARELO),
+            ("RAIO refletido", AZUL),
+        ]
+    elif selecao == 1:
+        textos = [
+            ("Fonte no FOCO -> Feixes refletidos saem paralelos (Farol Ideal)", AMARELO),
+        
+            ("RAIO incidente", BRANCO),
+            ("RAIO refletido", AZUL),
+        ]
+    else:
+        textos = []
+    desenhar_textos_coloridos(textos)
+
+def desenhar_textos_coloridos(textos):
+    for i, (txt, cor) in enumerate(textos):
+        texto = fonte.render(txt, True, cor)
+        tela.blit(texto, (20, 20 + i * 25))
