@@ -26,7 +26,6 @@ def matriz_rotacao(theta_graus):
 def matriz_reflexao(normal):
     """Matriz de reflexão sobre a normal unitária n"""
     nx, ny = normal
-    # v_refeletido = v - 2 (v * n) * n
     return Matriz2D(
         1 - 2*nx*nx, -2*nx*ny,
         -2*nx*ny,    1 - 2*ny*ny
