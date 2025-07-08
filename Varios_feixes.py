@@ -52,7 +52,7 @@ def desenhar_feixes(origem, cor_raio, cor_reflexao, angulo_global):
 
 def desenhar_legendas():
     textos = [
-        ("Fonte no FOCO → Feixes refletidos saem paralelos (Farol Ideal)", AMARELO),
+        ("Fonte no FOCO -> Feixes refletidos saem paralelos (Farol Ideal)", AMARELO),
        
         ("RAIO incidente", BRANCO),
         ("RAIO refletido", AZUL),
