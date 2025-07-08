@@ -1,6 +1,7 @@
 import pygame
 import math
 import sys
+import render_lib
 
 # Inicialização
 pygame.init()
@@ -8,6 +9,9 @@ largura, altura = 800, 600
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("Reflexão em Parábola com Álgebra Linear")
 relogio = pygame.time.Clock()
+fonte = pygame.font.SysFont("arial", 18)
+# Inicializa referencias globais
+render_lib.render_init(fonte, tela, pygame)
 
 # Cores
 PRETO = (0, 0, 0)
@@ -109,6 +113,7 @@ while rodando:
     ### --- TRANSFORMAÇÕES --- ###
     # 1. Matriz de rotação para o raio incidente
     M_rot = matriz_rotacao(angulo)
+    tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m,(0,0), BRANCO, "Matriz Rotacao")
     direcao = M_rot.aplicar((1, 0))  # Rotaciona vetor (1,0) pelo ângulo
     
     # 2. Encontrar ponto de interseção
@@ -120,6 +125,7 @@ while rodando:
         # 3. Calcular normal e matriz de reflexão
         normal = calcular_normal(ponto_intersecao[0])
         M_refl = matriz_reflexao(normal)
+        render_lib.desenhar_matriz(M_refl.m, (0, tamanho_matriz_desenhada[1] + 10), AMARELO, "Matriz Reflexao")
         
         # 4. Aplicar reflexão ao vetor direção
         v_refletido = M_refl.aplicar(direcao)

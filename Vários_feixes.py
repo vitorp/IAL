@@ -1,6 +1,7 @@
 import pygame
 import math
 import sys
+import render_lib
 
 pygame.init()
 largura, altura = 1000, 600
@@ -8,6 +9,8 @@ tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption("Reflexão em Parábola - Álgebra Linear Aplicada")
 relogio = pygame.time.Clock()
 fonte = pygame.font.SysFont("arial", 18)
+# Inicializa referencias globais
+render_lib.render_init(fonte, tela, pygame)
 
 # Cores
 PRETO = (0, 0, 0)
@@ -87,15 +90,21 @@ def intersecao_raio_parabola(origem, direcao):
     return (x, y) if 400 <= x <= 700 else None
 
 def desenhar_feixes(origem, cor_raio, cor_reflexao, angulo_global):
+    tamanho_matriz_desenhada = (0,100)
+    counter = 0
     for ang in range(-50, 51, 10):
+        counter += 1
         base = (math.cos(math.radians(ang)), math.sin(math.radians(ang)))
         M_rot = matriz_rotacao(angulo_global)
+        # Desenha matriz de rotação
+        tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot, (0,tamanho_matriz_desenhada[1]), BRANCO, f"Matriz Rotação Raio {counter}")
         direcao = aplicar_matriz(M_rot, base)
         ponto = intersecao_raio_parabola(origem, direcao)
         if ponto:
             pygame.draw.line(tela, cor_raio, origem, ponto, 2)
             normal = calcular_normal(ponto[0])
             M_refl = matriz_reflexao(normal)
+            tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_refl, (0,tamanho_matriz_desenhada[1]), AMARELO, f"Matriz Reflexão Raio {counter}")
             refletido = aplicar_matriz(M_refl, direcao)
             fim = (ponto[0] + refletido[0] * 1000, ponto[1] + refletido[1] * 1000)
             pygame.draw.line(tela, cor_reflexao, ponto, fim, 1)
@@ -123,7 +132,7 @@ while rodando:
     teclas = pygame.key.get_pressed()
     if teclas[pygame.K_LEFT]: angulo_global -= 1
     if teclas[pygame.K_RIGHT]: angulo_global += 1
-
+    
     desenhar_parabola()
     desenhar_legendas()
 
