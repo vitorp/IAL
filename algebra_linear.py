@@ -12,6 +12,7 @@ class Matriz2D:
     
     def aplicar(self, vetor):
         """Multiplica matriz por vetor: M*v"""
+        
         x = self.m[0][0] * vetor[0] + self.m[0][1] * vetor[1]
         y = self.m[1][0] * vetor[0] + self.m[1][1] * vetor[1]
         return (x, y)
@@ -21,11 +22,19 @@ def matriz_rotacao(theta_graus):
     theta = math.radians(theta_graus)
     cos_t = math.cos(theta)
     sin_t = math.sin(theta)
+    # Matrix * vetor = vetor_rotacionado
+    # | cos(theta) -sin(theta)|   |x|   |x*cos(th) - y*sin(th) |
+    # | sin(theta)  cos(theta)| * |y| = |x*sin(th) + y cos(th) |
     return Matriz2D(cos_t, -sin_t, sin_t, cos_t)
 
 def matriz_reflexao(normal):
     """Matriz de reflexão sobre a normal unitária n"""
     nx, ny = normal
+    # v_refletido = v −2(v . n)*n
+    # n(n^t*v)=(v . n) n
+    # v_refletido = v * 2(I - nn^t)*n
+    #    (| 1 0 |   |x|         )   |x|
+    # 2 *(| 0 1 | - |y| * [x y] ) * |y|
     return Matriz2D(
         1 - 2*nx*nx, -2*nx*ny,
         -2*nx*ny,    1 - 2*ny*ny
@@ -76,6 +85,9 @@ def intersecao_raio_parabola(origem, direcao):
         parabola_y = a * (x0 - h)**2 + k
         if abs(dy) < epsilon:
             return None  # Raio direcional pequeno demais
+        # y = y0 + t * dy
+        # y - y0 = t * dy
+        # (y - y0)/dy = t
         t = (parabola_y - y0) / dy
         if t < 0:
             return None

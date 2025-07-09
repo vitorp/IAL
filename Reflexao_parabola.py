@@ -26,7 +26,6 @@ def desenhar_feixes(angulo_global, quantidade_feixes):
         (M_rot, direcao,  ponto_intersecao, normal, M_refl, v_refletido) = calcular_feixe(ang+ angulo_global, origem)
         if numero_raio == 1:
             tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m,(0, tamanho_matriz_desenhada[1]), BRANCO, f"Matriz Rotação Raio {numero_raio} {angulo_global + ang} graus")
-            print()
         else:
             tamanho_matriz_desenhada = render_lib.desenhar_matriz(M_rot.m, (0,tamanho_matriz_desenhada[1]), BRANCO, f"Matriz Rotação Raio {numero_raio}")
         if ponto_intersecao:
