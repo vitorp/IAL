@@ -64,8 +64,8 @@ def adicionar_coordenadas(coord1, coord2):
 ### Renders de feixes
 
 def desenhar_raio_refletido(ponto_intersecao, v_refletido):
-    fim_refletido = (ponto_intersecao[0] + v_refletido[0], 
-                        ponto_intersecao[1] + v_refletido[1])
+    fim_refletido = (ponto_intersecao[0] + v_refletido[0]*1000, 
+                        ponto_intersecao[1] + v_refletido[1]*1000)
     pygame.draw.line(tela, AZUL, ponto_intersecao, fim_refletido, 2)
 
 def desenhar_reta_normal(ponto_intersecao, normal):
